@@ -37,10 +37,8 @@ public class Servidor implements Runnable {
             if(opt==JFileChooser.APPROVE_OPTION){
 
                 // Criando arquivo que sera transferido pelo servidor
-                File file = fileChooser.getSelectedFile();
-               
-                String extensao = file.getName().substring(file.getName().lastIndexOf("."), file.getName().length());
-                               
+                File file = fileChooser.getSelectedFile();           
+              
                 mandarMsg(sock, file.getName());
                 
                 fileIn = new FileInputStream(file);

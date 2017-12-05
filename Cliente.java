@@ -5,6 +5,7 @@ import java.net.Socket;
 public class Cliente implements Runnable{
     Socket sockServer;
     boolean pausado;
+    boolean cancelado;
     public Cliente(String ip, int port) throws IOException {
         //Cria conexao com o servidor
         System.out.println("Conectado com o servidor pela porta: "+port);
@@ -17,7 +18,11 @@ public class Cliente implements Runnable{
 
         }
     }
-
+    
+    public void setCancelado(boolean cancelado) {
+    	this.cancelado=cancelado;
+    	System.out.println("TRANSFERENCIA CANCELADA");
+    }
     public synchronized void setPausado(boolean pausado){
         this.pausado=pausado;
         if(!this.pausado){
@@ -35,21 +40,23 @@ public class Cliente implements Runnable{
     public void run() {
         FileOutputStream fos = null;
         InputStream is = null;
+        File file = null;
         try {
             is = sockServer.getInputStream();
             
             String nome = receberMsg(sockServer);
             
-
             JFileChooser salvandoArquivo = new JFileChooser();
             salvandoArquivo.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
+            
             int resultado = salvandoArquivo.showSaveDialog(null);
 
             if(resultado==JFileChooser.APPROVE_OPTION){
 
                 // Cria arquivo local no cliente
-                fos=new FileOutputStream(new File(salvandoArquivo.getSelectedFile().getPath()+"\\"+nome));
+            	file = new File(salvandoArquivo.getSelectedFile().getPath()+"\\"+nome);
+                fos=new FileOutputStream(file);
+                
                 System.out.println("Arquivo Local Criado");
             }
 
@@ -59,12 +66,21 @@ public class Cliente implements Runnable{
 
             // Copia conteudo do canal
             System.out.println("Recebendo arquivo...");
-            while ((bytesRead = is.read(cbuffer)) != -1) {
-                verificaPausa();
+            while (((bytesRead = is.read(cbuffer)) != -1) && cancelado==false) {
+                verificaPausa();                
                 fos.write(cbuffer, 0, bytesRead);
                 fos.flush();
-            }System.out.println("Arquivo recebido!");
-            fos.close();
+            }  fos.close();
+            is.close();
+            
+            if(cancelado==true) {
+            	file.delete();
+            	
+            	System.out.println("Arquivo apagado");
+            }else {
+            	 System.out.println("Arquivo recebido!");
+            }
+           
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
