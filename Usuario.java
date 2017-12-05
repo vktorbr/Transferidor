@@ -9,7 +9,7 @@ public class Usuario {
             System.out.println("DIGITE s PARA RECEBER ARQUIVOS:");
             String entrada = in.next();
             if(entrada.equals("s")) {
-                Cliente cliente = new Cliente("172.20.4.210", 3000);
+                Cliente cliente = new Cliente("localhost", 12345);
                 Thread client;
                 client = new Thread(cliente);
                 client.start();
