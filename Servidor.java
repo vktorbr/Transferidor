@@ -8,8 +8,8 @@ public class Servidor implements Runnable {
 
     public Servidor()throws IOException{
         // Abrindo porta para conexao de clients
-        servsock = new ServerSocket(3000);
-        System.out.println("Porta de conexao aberta 3000");
+        servsock = new ServerSocket(12345);
+        System.out.println("Porta de conexao aberta 12345");
 
     }
     public void mandarMsg(Socket sock, String extensao) throws IOException {
@@ -38,8 +38,11 @@ public class Servidor implements Runnable {
 
                 // Criando arquivo que sera transferido pelo servidor
                 File file = fileChooser.getSelectedFile();
+               
                 String extensao = file.getName().substring(file.getName().lastIndexOf("."), file.getName().length());
-                mandarMsg(sock, extensao);
+                               
+                mandarMsg(sock, file.getName());
+                
                 fileIn = new FileInputStream(file);
 
                 System.out.println("Lendo arquivo...");

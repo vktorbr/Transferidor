@@ -37,8 +37,9 @@ public class Cliente implements Runnable{
         InputStream is = null;
         try {
             is = sockServer.getInputStream();
-
-            String a=receberMsg(sockServer);
+            
+            String nome = receberMsg(sockServer);
+            
 
             JFileChooser salvandoArquivo = new JFileChooser();
             salvandoArquivo.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -48,7 +49,7 @@ public class Cliente implements Runnable{
             if(resultado==JFileChooser.APPROVE_OPTION){
 
                 // Cria arquivo local no cliente
-                fos=new FileOutputStream(new File(salvandoArquivo.getSelectedFile().getPath()+"\\filme."+a));
+                fos=new FileOutputStream(new File(salvandoArquivo.getSelectedFile().getPath()+"\\"+nome));
                 System.out.println("Arquivo Local Criado");
             }
 
