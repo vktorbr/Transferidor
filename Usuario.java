@@ -189,6 +189,10 @@ public class Usuario extends JFrame {
 		tempoCliente.setBounds(455, 112, 71, 30);
 		abrirPorta.add(tempoCliente);
 		
+		JButton btnNewButton_5 = new JButton("Abrir Porta");
+		btnNewButton_5.setBounds(113, 80, 89, 23);
+		abrirPorta.add(btnNewButton_5);
+		
 		
 			
 	} 
