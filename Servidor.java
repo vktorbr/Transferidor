@@ -9,35 +9,57 @@ public class Servidor implements Runnable {
 
     public Servidor()throws IOException{
         // Abrindo porta para conexao de clients
-        servsock = new ServerSocket(12345);
+        servsock = new ServerSocket(3000);
         System.out.println("Porta de conexao aberta 12345");
     }
     public void mandarMsg(Socket sock, String extensao) throws IOException {
         DataOutputStream saida = new DataOutputStream(sock.getOutputStream());
-            saida.writeUTF(extensao);
+        saida.writeUTF(extensao);
+    }
+
+    public void mandarTam(Socket sock, long length) throws IOException {
+        DataOutputStream saida = new DataOutputStream(sock.getOutputStream());
+        saida.writeLong(length);
+
     }
     public void enviarArquivo(Socket sock, OutputStream socketOut, FileInputStream fileIn, double tamanho) throws IOException {
-    	 // Criando tamanho de leitura
+        // Criando tamanho de leitura
         byte[] cbuffer = new byte[1024];
         int bytesRead;
         double current = 0;
         double porcentagem=0;
-    	 // Criando canal de transferencia
+        double velocidade=0;
+        // Criando canal de transferencia
         socketOut = sock.getOutputStream();
-        
+
         // Lendo arquivo criado e enviado para o canal de transferencia
         System.out.println("Enviando Arquivo...");
-
+        
         while ((bytesRead = fileIn.read(cbuffer)) != -1) {
+            double tempoInicio = System.nanoTime();
             socketOut.write(cbuffer, 0, bytesRead);
             socketOut.flush();
+
+            double tempoFinal = ((System.nanoTime()-tempoInicio)/1000000000);
+           
             current+=bytesRead;
-            porcentagem=(current/tamanho)*100; 
             
-            System.out.printf("%.2f", porcentagem);
-            System.out.print("%");
-            System.out.println();
-        }
+            velocidade = (bytesRead/1024) / tempoFinal;
+
+            double tamanhoRestante = (tamanho-current)/1024;
+            double tempoRestante = tamanhoRestante/velocidade;
+           // System.out.println(tempoFinal);
+            //System.out.println("TEMPO RESTANTE: "+tempoRestante + "TAMANHO RESTANTE: "+tamanhoRestante);
+            //System.out.printf("%.2f", tempoRestante);
+            //System.out.println();
+            //porcentagem=(current/tamanho)*100;
+            //   System.out.println(tamanho);
+            //   System.out.printf("%.2f", porcentagem);
+            //    System.out.print("%");
+            //    System.out.println();
+        }fileIn.close();
+        socketOut.close();
+        sock.close();
         System.out.println("Arquivo Enviado!");
     }
     public void run() {
@@ -56,22 +78,24 @@ public class Servidor implements Runnable {
             if(opt==JFileChooser.APPROVE_OPTION){
 
                 // Criando arquivo que sera transferido pelo servidor
-                file = fileChooser.getSelectedFile();           
-                
+                file = fileChooser.getSelectedFile();
+
                 mandarMsg(sock, file.getName());
-                
+
+                mandarTam(sock, file.length());
+
                 fileIn = new FileInputStream(file);
-                
+
                 System.out.println("Lendo arquivo...");
             }
             enviarArquivo(sock, socketOut, fileIn, file.length());
-           
+
         }catch(SocketException a) {
-        	System.out.println("Cliente cancelou a transferencia");
-        	
-        	//socketOut.close();
-        	run(); 
-        	
+            System.out.println("Cliente cancelou a transferencia");
+
+            //socketOut.close();
+            run();
+
         }
         catch (Exception e) {
             // Mostra erro no console
@@ -101,4 +125,5 @@ public class Servidor implements Runnable {
             }
         }
     }
+
 }
