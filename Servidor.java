@@ -4,13 +4,17 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class Servidor implements Runnable {
+public class Servidor implements Runnable  {
     ServerSocket servsock;
-
-    public Servidor()throws IOException{
+    
+    Usuario usuario;
+    
+    public Servidor(int porta, Usuario usuario)throws IOException{
         // Abrindo porta para conexao de clients
-        servsock = new ServerSocket(3000);
+        servsock = new ServerSocket(porta);
         System.out.println("Porta de conexao aberta 12345");
+        
+        this.usuario=usuario;           
     }
     public void mandarMsg(Socket sock, String extensao) throws IOException {
         DataOutputStream saida = new DataOutputStream(sock.getOutputStream());
@@ -31,7 +35,7 @@ public class Servidor implements Runnable {
         double velocidade=0;
         // Criando canal de transferencia
         socketOut = sock.getOutputStream();
-
+        
         // Lendo arquivo criado e enviado para o canal de transferencia
         System.out.println("Enviando Arquivo...");
         
@@ -48,15 +52,10 @@ public class Servidor implements Runnable {
 
             double tamanhoRestante = (tamanho-current)/1024;
             double tempoRestante = tamanhoRestante/velocidade;
-           // System.out.println(tempoFinal);
-            //System.out.println("TEMPO RESTANTE: "+tempoRestante + "TAMANHO RESTANTE: "+tamanhoRestante);
-            //System.out.printf("%.2f", tempoRestante);
-            //System.out.println();
-            //porcentagem=(current/tamanho)*100;
-            //   System.out.println(tamanho);
-            //   System.out.printf("%.2f", porcentagem);
-            //    System.out.print("%");
-            //    System.out.println();
+             porcentagem = (current/tamanho)*100;
+            
+            usuario.setarTempo(tempoRestante, usuario.tempoServidor);
+            usuario.setarPorcento(porcentagem, usuario.Porcentagem);
         }fileIn.close();
         socketOut.close();
         sock.close();
@@ -79,7 +78,7 @@ public class Servidor implements Runnable {
 
                 // Criando arquivo que sera transferido pelo servidor
                 file = fileChooser.getSelectedFile();
-
+                
                 mandarMsg(sock, file.getName());
 
                 mandarTam(sock, file.length());

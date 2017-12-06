@@ -3,6 +3,7 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -19,19 +20,20 @@ public class Usuario extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField ipServidor;
-	private JTextField portaCliente;
+	private JTextField portaServer;
 	public Cliente cliente;
 	private JTextField PortaServidor;
-	/**
-	 * Launch the application.
-	 */
+	public Servidor servidor;
+	public static Usuario frame;
+	public JTextPane PorcentagemCliente;
+	public JTextPane Porcentagem;
+	public JTextPane tempoServidor;
+	public JTextPane tempoCliente;
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				try {
-					(new Thread(new Servidor())).start();
-						                
-					Usuario frame = new Usuario();
+				try {					                
+					frame = new Usuario();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -53,19 +55,32 @@ public class Usuario extends JFrame {
 		contentPane.add(ipServidor);
 		ipServidor.setColumns(10);
 		
-		portaCliente = new JTextField();
-		portaCliente.setBounds(103, 46, 112, 23);
-		contentPane.add(portaCliente);
-		portaCliente.setColumns(10);
+		JTextPane ipCliente = new JTextPane();
+		ipCliente.setBounds(103, 19, 112, 20);
+		contentPane.add(ipCliente);
+		
+		portaServer = new JTextField();
+		portaServer.setBounds(103, 46, 112, 23);
+		contentPane.add(portaServer);
+		portaServer.setColumns(10);
+				
+		Porcentagem = new JTextPane();
+		Porcentagem.setBounds(21, 112, 37, 23);
+		contentPane.add(Porcentagem);
+		
 		JButton btnNewButton = new JButton("Iniciar");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				//textPane.setText(textField.getText());
+			
 				
 				try {
-					cliente = new Cliente(ipServidor.getText(), Integer.parseInt(PortaServidor.getText()));
+					servidor=new Servidor(Integer.parseInt(portaServer.getText()), frame);
+					Thread server= new Thread(servidor);
+					server.start();
 					
+					cliente = new Cliente(ipServidor.getText(), Integer.parseInt(PortaServidor.getText()), frame);
+					ipCliente.setText(ipServidor.getText());
 					Thread client;
 	                client = new Thread(cliente);
 	                client.start();
@@ -113,16 +128,14 @@ public class Usuario extends JFrame {
 		btnNewButton_3.setBounds(266, 78, 89, 23);
 		contentPane.add(btnNewButton_3);
 		
-		JTextPane textPane = new JTextPane();
-		textPane.setBounds(186, 143, 37, 23);
-		contentPane.add(textPane);
+		
 		
 		JLabel lblIp = new JLabel("SERVIDOR ");
 		lblIp.setBounds(10, 0, 63, 14);
 		contentPane.add(lblIp);
 		
 		JLabel lblNewLabel = new JLabel("CLIENTE");
-		lblNewLabel.setBounds(384, 0, 46, 14);
+		lblNewLabel.setBounds(384, 0, 71, 14);
 		contentPane.add(lblNewLabel);
 		
 		JLabel lblIpDoCliente = new JLabel("IP do Cliente:");
@@ -133,7 +146,7 @@ public class Usuario extends JFrame {
 		lblNewLabel_1.setBounds(384, 20, 103, 14);
 		contentPane.add(lblNewLabel_1);
 		
-		JLabel lblPorta = new JLabel("Porta Cliente:");
+		JLabel lblPorta = new JLabel("Porta:");
 		lblPorta.setBounds(10, 50, 89, 14);
 		contentPane.add(lblPorta);
 		
@@ -142,12 +155,35 @@ public class Usuario extends JFrame {
 		contentPane.add(PortaServidor);
 		PortaServidor.setColumns(10);
 		
-		JLabel lblPortaServidor = new JLabel("Porta Servidor:");
+		JLabel lblPortaServidor = new JLabel("Porta:");
 		lblPortaServidor.setBounds(384, 50, 103, 14);
 		contentPane.add(lblPortaServidor);
 		
-		JTextPane ipCliente = new JTextPane();
-		ipCliente.setBounds(103, 19, 112, 20);
-		contentPane.add(ipCliente);
+		PorcentagemCliente = new JTextPane();
+		PorcentagemCliente.setBounds(384, 112, 42, 30);
+		contentPane.add(PorcentagemCliente);
+		
+		tempoServidor = new JTextPane();
+		tempoServidor.setBounds(82, 112, 63, 30);
+		contentPane.add(tempoServidor);
+		
+		tempoCliente = new JTextPane();
+		tempoCliente.setBounds(455, 112, 71, 30);
+		contentPane.add(tempoCliente);
+			
+	} 
+	
+public void setarPorcento(double porcento, JTextPane Porcentagem ) {
+	
+	DecimalFormat df = new DecimalFormat("0.#");
+	String dx = df.format(porcento);
+		Porcentagem.setText(dx+"%");
 	}
+
+
+public void setarTempo(double tempo, JTextPane tempoPane) {
+	DecimalFormat df = new DecimalFormat("0.##");
+	String dx = df.format(tempo);
+		tempoPane.setText(dx);
+}
 }

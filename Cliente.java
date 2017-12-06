@@ -6,10 +6,12 @@ public class Cliente implements Runnable{
     Socket sockServer;
     boolean pausado;
     boolean cancelado;
-    public Cliente(String ip, int port) throws IOException {
+    Usuario usuario;
+    public Cliente(String ip, int port, Usuario usuario) throws IOException {
         //Cria conexao com o servidor
         System.out.println("Conectado com o servidor pela porta: "+port);
         sockServer = new Socket(ip, port);
+        this.usuario=usuario;
     }
     public synchronized void verificaPausa() throws InterruptedException {
         while(this.pausado && this.cancelado==false){
@@ -59,6 +61,7 @@ public class Cliente implements Runnable{
         double current=0;
         double porcentagem=0;
         double velocidade=0;
+        int cont=50;
         // Criando canal de transferencia
         is = sockServer.getInputStream();
 
@@ -68,22 +71,27 @@ public class Cliente implements Runnable{
             verificaPausa();
             
             if(!cancelado){
+            	
             double tempoInicio = System.nanoTime();	
             fos.write(cbuffer, 0, bytesRead);
             fos.flush();
             double tempoFinal =( (System.nanoTime()-tempoInicio)/1000000000);
-            System.out.println(System.nanoTime());
+            
             velocidade = (bytesRead/1024)/tempoFinal;
             current+=bytesRead;
             double tamanhoRestante = (tamanho-current)/1024;
             double tempoRestante = tamanhoRestante/velocidade;
+            if(cont==0) {
+            	cont=50;
+            usuario.setarTempo(tempoRestante, usuario.tempoCliente);
+            }cont--;
             porcentagem=(current/tamanho)*100;
-          //  System.out.println("TEMPO RESTANTE: "+tempoRestante + "TAMANHO RESTANTE: "+tamanhoRestante);
-           // System.out.printf("%.2f", porcentagem);
-            //System.out.print("%");
-           // System.out.println();
-            }
-        }System.out.println("Conexao fechada!");
+            usuario.setarPorcento(porcentagem, usuario.PorcentagemCliente);
+           
+        } }if(cancelado==false) {
+        	System.out.println("Arquivo Recebido");
+        }
+            System.out.println("Conexao fechada!");
         fos.close();
         is.close();
         if(cancelado==true) {
