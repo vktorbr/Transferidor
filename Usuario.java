@@ -29,6 +29,7 @@ public class Usuario extends JFrame {
 	public JTextPane Porcentagem;
 	public JTextPane tempoServidor;
 	public JTextPane tempoCliente;
+	public boolean portaberta;
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -73,6 +74,9 @@ public class Usuario extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					servidor=new Servidor(Integer.parseInt(portaServer.getText()), frame);
+					portaberta=true;
+					btnNewButton_4.setBounds(103, 80, 112, 23);
+					abrirPorta.add(btnNewButton_4);
 					
 				} catch (NumberFormatException | IOException e) {
 					// TODO Auto-generated catch block
@@ -82,6 +86,32 @@ public class Usuario extends JFrame {
 				server.start();
 			}
 		});
+		
+		JButton btnNewButton = new JButton("Iniciar");
+		btnNewButton.addActionListener(new ActionListener() {
+		
+			public void actionPerformed(ActionEvent arg0) {
+				
+				try {
+					
+					if(!portaberta) {
+					cliente = new Cliente(ipServidor.getText(), Integer.parseInt(PortaServidor.getText()), frame);
+					ipCliente.setText(ipServidor.getText());
+					Thread client;
+	                client = new Thread(cliente);
+	                client.start();
+					}
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+				}
+                
+				;
+				
+			}
+		});
+		btnNewButton.setBounds(266, 16, 89, 23);
+		abrirPorta.add(btnNewButton);
 		
 		
 		JButton btnNewButton_1 = new JButton("Cancelar");
