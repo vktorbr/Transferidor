@@ -18,7 +18,7 @@ import javax.swing.JLabel;
 
 public class Usuario extends JFrame {
 
-	private JPanel contentPane;
+	private JPanel abrirPorta;
 	private JTextField ipServidor;
 	private JTextField portaServer;
 	public Cliente cliente;
@@ -45,56 +45,44 @@ public class Usuario extends JFrame {
 	public Usuario() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 633, 445);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
+		abrirPorta = new JPanel();
+		abrirPorta.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(abrirPorta);
+		abrirPorta.setLayout(null);
 		
 		ipServidor = new JTextField();
 		ipServidor.setBounds(475, 16, 112, 23);
-		contentPane.add(ipServidor);
+		abrirPorta.add(ipServidor);
 		ipServidor.setColumns(10);
 		
 		JTextPane ipCliente = new JTextPane();
 		ipCliente.setBounds(103, 19, 112, 20);
-		contentPane.add(ipCliente);
+		abrirPorta.add(ipCliente);
 		
 		portaServer = new JTextField();
 		portaServer.setBounds(103, 46, 112, 23);
-		contentPane.add(portaServer);
+		abrirPorta.add(portaServer);
 		portaServer.setColumns(10);
 				
 		Porcentagem = new JTextPane();
 		Porcentagem.setBounds(21, 112, 37, 23);
-		contentPane.add(Porcentagem);
+		abrirPorta.add(Porcentagem);
 		
-		JButton btnNewButton = new JButton("Iniciar");
-		btnNewButton.addActionListener(new ActionListener() {
+		JButton btnNewButton_4 = new JButton("Abrir porta");
+		btnNewButton_4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
-			
-				
 				try {
 					servidor=new Servidor(Integer.parseInt(portaServer.getText()), frame);
-					Thread server= new Thread(servidor);
-					server.start();
 					
-					cliente = new Cliente(ipServidor.getText(), Integer.parseInt(PortaServidor.getText()), frame);
-					ipCliente.setText(ipServidor.getText());
-					Thread client;
-	                client = new Thread(cliente);
-	                client.start();
-				} catch (IOException e) {
-					
+				} catch (NumberFormatException | IOException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-                
-				;
-				
+				Thread server= new Thread(servidor);
+				server.start();
 			}
 		});
-		btnNewButton.setBounds(266, 16, 89, 23);
-		contentPane.add(btnNewButton);
+		
 		
 		JButton btnNewButton_1 = new JButton("Cancelar");
 		btnNewButton_1.addActionListener(new ActionListener() {
@@ -108,7 +96,7 @@ public class Usuario extends JFrame {
 			}
 		});
 		btnNewButton_1.setBounds(266, 112, 89, 23);
-		contentPane.add(btnNewButton_1);
+		abrirPorta.add(btnNewButton_1);
 		
 		JButton btnNewButton_2 = new JButton("Pausar");
 		btnNewButton_2.addActionListener(new ActionListener() {
@@ -117,7 +105,7 @@ public class Usuario extends JFrame {
 			}
 		});
 		btnNewButton_2.setBounds(266, 46, 89, 23);
-		contentPane.add(btnNewButton_2);
+		abrirPorta.add(btnNewButton_2);
 		
 		JButton btnNewButton_3 = new JButton("Reiniciar");
 		btnNewButton_3.addActionListener(new ActionListener() {
@@ -126,50 +114,52 @@ public class Usuario extends JFrame {
 			}
 		});
 		btnNewButton_3.setBounds(266, 78, 89, 23);
-		contentPane.add(btnNewButton_3);
+		abrirPorta.add(btnNewButton_3);
 		
 		
 		
 		JLabel lblIp = new JLabel("SERVIDOR ");
 		lblIp.setBounds(10, 0, 63, 14);
-		contentPane.add(lblIp);
+		abrirPorta.add(lblIp);
 		
 		JLabel lblNewLabel = new JLabel("CLIENTE");
 		lblNewLabel.setBounds(384, 0, 71, 14);
-		contentPane.add(lblNewLabel);
+		abrirPorta.add(lblNewLabel);
 		
 		JLabel lblIpDoCliente = new JLabel("IP do Cliente:");
 		lblIpDoCliente.setBounds(10, 20, 103, 14);
-		contentPane.add(lblIpDoCliente);
+		abrirPorta.add(lblIpDoCliente);
 		
 		JLabel lblNewLabel_1 = new JLabel("IP do Servidor:");
 		lblNewLabel_1.setBounds(384, 20, 103, 14);
-		contentPane.add(lblNewLabel_1);
+		abrirPorta.add(lblNewLabel_1);
 		
 		JLabel lblPorta = new JLabel("Porta:");
 		lblPorta.setBounds(10, 50, 89, 14);
-		contentPane.add(lblPorta);
+		abrirPorta.add(lblPorta);
 		
 		PortaServidor = new JTextField();
 		PortaServidor.setBounds(475, 46, 112, 23);
-		contentPane.add(PortaServidor);
+		abrirPorta.add(PortaServidor);
 		PortaServidor.setColumns(10);
 		
 		JLabel lblPortaServidor = new JLabel("Porta:");
 		lblPortaServidor.setBounds(384, 50, 103, 14);
-		contentPane.add(lblPortaServidor);
+		abrirPorta.add(lblPortaServidor);
 		
 		PorcentagemCliente = new JTextPane();
 		PorcentagemCliente.setBounds(384, 112, 42, 30);
-		contentPane.add(PorcentagemCliente);
+		abrirPorta.add(PorcentagemCliente);
 		
 		tempoServidor = new JTextPane();
 		tempoServidor.setBounds(82, 112, 63, 30);
-		contentPane.add(tempoServidor);
+		abrirPorta.add(tempoServidor);
 		
 		tempoCliente = new JTextPane();
 		tempoCliente.setBounds(455, 112, 71, 30);
-		contentPane.add(tempoCliente);
+		abrirPorta.add(tempoCliente);
+		
+		
 			
 	} 
 	
