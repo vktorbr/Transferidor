@@ -92,11 +92,11 @@ public class Cliente implements Runnable{
             fos.flush();
             long tempoFinal =(System.nanoTime()-tempoInicio);
             if(tempoFinal!=0){
-            	velocidade = (bytesRead/1024)/tempoFinal;
+            	velocidade = bytesRead/tempoFinal;
             }
             current+=bytesRead;
             
-            long tamanhoRestante = (long) ((tamanho-current)/1024);
+            long tamanhoRestante = (long) (tamanho-current);
             if(velocidade!=0){
             	tempoRestante = (tamanhoRestante/velocidade);
             }

@@ -103,7 +103,7 @@ public class Usuario extends JFrame {
 					cliente = new Cliente(ipServidor.getText(), Integer.parseInt(PortaServidor.getText()), frame);
 					InetAddress addr = InetAddress.getLocalHost();
 					String aux = addr.getHostAddress();
-					cliente.mandaMsg(cliente.sockServer, aux);
+					cliente.mandarMsg(cliente.sockServer, aux);
 					
 					Thread client = new Thread(cliente);
 	                client.start();
