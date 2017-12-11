@@ -6,14 +6,17 @@ import java.net.SocketException;
 
 public class Servidor implements Runnable  {
     ServerSocket servsock;
-    
     Usuario usuario;
     
     public Servidor(int porta, Usuario usuario)throws IOException{
         // Abrindo porta para conexao de clients
         servsock = new ServerSocket(porta);
-        System.out.println("Porta de conexao aberta 12345");
-        
+        System.out.println("Porta "+porta+" aberta!");
+        RTTServidor rttServer = new RTTServidor(1);
+		Thread rttServerT = new Thread(rttServer);
+		rttServerT.start();
+		
+		
         this.usuario=usuario;           
     }
     public void mandarMsg(Socket sock, String extensao) throws IOException {
@@ -32,7 +35,8 @@ public class Servidor implements Runnable  {
         int bytesRead;
         double current = 0;
         double porcentagem=0;
-        double velocidade=0;
+        long velocidade=0;
+        long tempoRestante=0;
         // Criando canal de transferencia
         socketOut = sock.getOutputStream();
         
@@ -40,21 +44,25 @@ public class Servidor implements Runnable  {
         System.out.println("Enviando Arquivo...");
         
         while ((bytesRead = fileIn.read(cbuffer)) != -1) {
-            double tempoInicio = System.nanoTime();
+            long tempoInicio = System.currentTimeMillis();
             socketOut.write(cbuffer, 0, bytesRead);
             socketOut.flush();
 
-            double tempoFinal = ((System.nanoTime()-tempoInicio)/1000000000);
-           
+            long tempoFinal = ((System.currentTimeMillis()-tempoInicio));
+            
+            if(tempoFinal!=0){
+            	velocidade = (bytesRead/1024) / tempoFinal;
+            }
+            
             current+=bytesRead;
             
-            velocidade = (bytesRead/1024) / tempoFinal;
-
-            double tamanhoRestante = (tamanho-current)/1024;
-            double tempoRestante = tamanhoRestante/velocidade;
-             porcentagem = (current/tamanho)*100;
+            long tamanhoRestante = (long) ((tamanho-current)/1024);
+            if(velocidade!=0){
+            	tempoRestante = tamanhoRestante/velocidade;
+            }
+            porcentagem = (current/tamanho)*100;
             
-            usuario.setarTempo(tempoRestante, usuario.tempoServidor);
+            usuario.setarTempo(tempoRestante/1000, usuario.tempoServidor);
             usuario.setarPorcento(porcentagem, usuario.Porcentagem);
         }fileIn.close();
         socketOut.close();
@@ -70,7 +78,8 @@ public class Servidor implements Runnable  {
             // Cliente conectado
             Socket sock = servsock.accept();
             System.out.println("Conexao recebida pelo cliente");
-
+            
+    		
             //Escolhendo arquivo a ser enviado
             JFileChooser fileChooser = new JFileChooser();
             int opt = fileChooser.showOpenDialog(null);
@@ -86,7 +95,11 @@ public class Servidor implements Runnable  {
                 fileIn = new FileInputStream(file);
 
                 System.out.println("Lendo arquivo...");
-            }
+            }  
+            RTTCliente rttCliente2 = new RTTCliente(usuario.ipCliente.getText(), usuario, 1);
+            Thread rttClientT = new Thread(rttCliente2);
+            rttClientT.start();
+           
             enviarArquivo(sock, socketOut, fileIn, file.length());
 
         }catch(SocketException a) {

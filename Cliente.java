@@ -12,6 +12,16 @@ public class Cliente implements Runnable{
         System.out.println("Conectado com o servidor pela porta: "+port);
         sockServer = new Socket(ip, port);
         this.usuario=usuario;
+        
+        RTTCliente rttCliente = new RTTCliente(ip, usuario, 2);
+        Thread rttClienteT = new Thread(rttCliente);
+        rttClienteT.start();
+        
+        RTTServidor rttServer = new RTTServidor(2);
+ 		Thread rttServerT = new Thread(rttServer);
+ 		rttServerT.start();
+        
+        
     }
     public synchronized void verificaPausa() throws InterruptedException {
         while(this.pausado && this.cancelado==false){
@@ -49,7 +59,7 @@ public class Cliente implements Runnable{
         while(true) {
             DataInputStream entrada = new DataInputStream(sockServer.getInputStream());
             long tamanho = entrada.readLong();
-
+            
             return tamanho;
         }
     }
@@ -60,8 +70,9 @@ public class Cliente implements Runnable{
         int bytesRead;
         double current=0;
         double porcentagem=0;
-        double velocidade=0;
-        int cont=50;
+        long velocidade=0;
+        int cont=100;
+        long tempoRestante=0;
         // Criando canal de transferencia
         is = sockServer.getInputStream();
 
@@ -72,19 +83,23 @@ public class Cliente implements Runnable{
             
             if(!cancelado){
             	
-            double tempoInicio = System.nanoTime();	
+            long tempoInicio = System.currentTimeMillis();	
             fos.write(cbuffer, 0, bytesRead);
             fos.flush();
-            double tempoFinal =( (System.nanoTime()-tempoInicio)/1000000000);
-            
-            velocidade = (bytesRead/1024)/tempoFinal;
+            long tempoFinal =(System.currentTimeMillis()-tempoInicio);
+            if(tempoFinal!=0){
+            	velocidade = (bytesRead/1024)/tempoFinal;
+            }
             current+=bytesRead;
-            double tamanhoRestante = (tamanho-current)/1024;
-            double tempoRestante = tamanhoRestante/velocidade;
-            if(cont==0) {
-            	cont=50;
-            usuario.setarTempo(tempoRestante, usuario.tempoCliente);
-            }cont--;
+            
+            long tamanhoRestante = (long) ((tamanho-current)/1024);
+            if(velocidade!=0){
+            	tempoRestante = (tamanhoRestante/velocidade);
+            }
+           // if(cont==0) {
+            //	cont=100;
+            usuario.setarTempo(tempoRestante/1000, usuario.tempoCliente);
+            //}cont--;
             porcentagem=(current/tamanho)*100;
             usuario.setarPorcento(porcentagem, usuario.PorcentagemCliente);
            
@@ -109,8 +124,7 @@ public class Cliente implements Runnable{
         InputStream is = null;
         File file = null;
         try {
-
-
+        	 
             String nome = receberMsg(sockServer);
             long tamanho = receberTam(sockServer);
             JFileChooser salvandoArquivo = new JFileChooser();
