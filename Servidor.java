@@ -7,7 +7,7 @@ import java.net.SocketException;
 public class Servidor implements Runnable  {
     ServerSocket servsock;
     Usuario usuario;
-    
+    String ipcliente;
     public Servidor(int porta, Usuario usuario)throws IOException{
         // Abrindo porta para conexao de clients
         servsock = new ServerSocket(porta);
@@ -27,8 +27,16 @@ public class Servidor implements Runnable  {
     public void mandarTam(Socket sock, long length) throws IOException {
         DataOutputStream saida = new DataOutputStream(sock.getOutputStream());
         saida.writeLong(length);
-
     }
+    public String receberMsg(Socket sockServer) throws IOException {
+           while(true) {
+                DataInputStream entrada = new DataInputStream(sockServer.getInputStream());
+                String extensao = entrada.readUTF();
+                return extensao;
+            }
+        }   
+        
+    
     public void enviarArquivo(Socket sock, OutputStream socketOut, FileInputStream fileIn, double tamanho) throws IOException {
         // Criando tamanho de leitura
         byte[] cbuffer = new byte[1024];
@@ -44,11 +52,11 @@ public class Servidor implements Runnable  {
         System.out.println("Enviando Arquivo...");
         
         while ((bytesRead = fileIn.read(cbuffer)) != -1) {
-            long tempoInicio = System.currentTimeMillis();
+            long tempoInicio = System.nanoTime();
             socketOut.write(cbuffer, 0, bytesRead);
             socketOut.flush();
 
-            long tempoFinal = ((System.currentTimeMillis()-tempoInicio));
+            long tempoFinal = ((System.nanoTime()-tempoInicio));
             
             if(tempoFinal!=0){
             	velocidade = (bytesRead/1024) / tempoFinal;
@@ -62,7 +70,7 @@ public class Servidor implements Runnable  {
             }
             porcentagem = (current/tamanho)*100;
             
-            usuario.setarTempo(tempoRestante/1000, usuario.tempoServidor);
+            usuario.setarTempo(tempoRestante/1000000, usuario.tempoServidor);
             usuario.setarPorcento(porcentagem, usuario.Porcentagem);
         }fileIn.close();
         socketOut.close();
@@ -91,11 +99,13 @@ public class Servidor implements Runnable  {
                 mandarMsg(sock, file.getName());
 
                 mandarTam(sock, file.length());
-
+                //ipcliente = receberMsg(sockServer);
                 fileIn = new FileInputStream(file);
 
                 System.out.println("Lendo arquivo...");
-            }  
+            }  ipcliente = receberMsg(sock);
+            usuario.setarIp(ipcliente);
+            
             RTTCliente rttCliente2 = new RTTCliente(usuario.ipCliente.getText(), usuario, 1);
             Thread rttClientT = new Thread(rttCliente2);
             rttClientT.start();
