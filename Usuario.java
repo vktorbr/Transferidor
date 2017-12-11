@@ -1,4 +1,3 @@
-
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -103,7 +102,9 @@ public class Usuario extends JFrame {
 					if(portaberta) {
 					cliente = new Cliente(ipServidor.getText(), Integer.parseInt(PortaServidor.getText()), frame);
 					InetAddress addr = InetAddress.getLocalHost();
-					ipCliente.setText(addr.getHostAddress());
+					String aux = addr.getHostAddress();
+					cliente.mandaMsg(cliente.sockServer, aux);
+					
 					Thread client = new Thread(cliente);
 	                client.start();
 	                
@@ -224,10 +225,14 @@ public void setarPorcento(double porcento, JTextPane Porcentagem ) {
 
 public void setarTempo(long tempo, JTextPane tempoPane) {
 	
-	tempoPane.setText(String.format("%02d minutos e %02d segundos", tempo/60, tempo%60));
+	tempoPane.setText(String.format("%02d segundos e %02d milisegundos", tempo/1000, tempo%1000));
 	//DecimalFormat df = new DecimalFormat("0.##");
 	//String dx = df.format(tempo);
 		//tempoPane.setText(dx);
 	
+}
+public void setarIp(String addr) {
+	
+	ipCliente.setText(addr);
 }
 }
