@@ -13,14 +13,9 @@ public class Cliente implements Runnable{
         sockServer = new Socket(ip, port);
         this.usuario=usuario;
         
-        RTTCliente rttCliente = new RTTCliente(ip, usuario, 2);
+        RTTCliente rttCliente = new RTTCliente(ip, usuario);
         Thread rttClienteT = new Thread(rttCliente);
         rttClienteT.start();
-        
-        RTTServidor rttServer = new RTTServidor(2);
- 		Thread rttServerT = new Thread(rttServer);
- 		rttServerT.start();
-        
         
     }
     public synchronized void verificaPausa() throws InterruptedException {

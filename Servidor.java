@@ -12,7 +12,8 @@ public class Servidor implements Runnable  {
         // Abrindo porta para conexao de clients
         servsock = new ServerSocket(porta);
         System.out.println("Porta "+porta+" aberta!");
-        RTTServidor rttServer = new RTTServidor(1);
+        
+        RTTServidor rttServer = new RTTServidor();
 		Thread rttServerT = new Thread(rttServer);
 		rttServerT.start();
 		
@@ -65,7 +66,7 @@ public class Servidor implements Runnable  {
             
             double tamanhoRestante = (tamanho-current);
             if(velocidade!=0){
-            	tempoRestante = tamanhoRestante*velocidade;
+            	tempoRestante = tamanhoRestante/velocidade;
             }
             porcentagem = (current/tamanho)*100;
             
@@ -104,10 +105,7 @@ public class Servidor implements Runnable  {
                 System.out.println("Lendo arquivo...");
             }  ipcliente = receberMsg(sock);
             usuario.setarIp(ipcliente);
-            
-            RTTCliente rttCliente2 = new RTTCliente(usuario.ipCliente.getText(), usuario, 1);
-            Thread rttClientT = new Thread(rttCliente2);
-            rttClientT.start();
+          
            
             enviarArquivo(sock, socketOut, fileIn, file.length());
 

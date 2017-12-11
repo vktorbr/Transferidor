@@ -8,12 +8,12 @@ public class RTTCliente implements Runnable{
 	byte[] sendData;
 	InetAddress IPServer;
 	Usuario usuario;
-	int opcao;
-	RTTCliente(String ip, Usuario usuario, int opcao) throws IOException{
+	
+	RTTCliente(String ip, Usuario usuario) throws IOException{
 		clientSocket = new DatagramSocket();	//criando o socket UDP
 		IPServer= InetAddress.getByName(ip);	//definindo o IP do servidor que vai se comunicar
 		this.usuario=usuario;
-		this.opcao=opcao;
+		
 	}	
 		
 	public void run() {
@@ -30,11 +30,9 @@ public class RTTCliente implements Runnable{
 			DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 			clientSocket.receive(receivePacket);	//recebendo o pacote
 			long rtt = System.currentTimeMillis()-as;
-			if(opcao==1){
-				usuario.setarRTT(rtt, usuario.RTTServidor);
-			}else if(opcao==2){
+			
 			usuario.setarRTT(rtt, usuario.RTTCliente);
-			}
+		
 			clientSocket.close();	//fechando o socket
 		} catch (IOException e) {
 			

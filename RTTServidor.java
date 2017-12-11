@@ -11,12 +11,10 @@ public class RTTServidor implements Runnable{
 	InetAddress clientIP;
 	int port;
 
-	RTTServidor(int opcao) throws SocketException{
-		if(opcao==1){
-			serverSocket = new DatagramSocket(5000);
-		}else if(opcao==2){
+	RTTServidor() throws SocketException{
+		
 			serverSocket = new DatagramSocket(5001);
-		}
+		
 			//abrir socket na porta 5000
 		receiveData = new byte[1];
 		
