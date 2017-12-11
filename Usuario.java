@@ -223,9 +223,9 @@ public void setarPorcento(double porcento, JTextPane Porcentagem ) {
 		Porcentagem.setText(dx+"%");
 	}
 
-public void setarTempo(long tempo, JTextPane tempoPane) {
-	
-	tempoPane.setText(String.format("%02d segundos e %02d milisegundos", tempo/1000, tempo%1000));
+public void setarTempo(double tempo, JTextPane tempoPane) {
+	System.out.println(tempo);
+	tempoPane.setText(String.format("%.2f minutos e %.2f segundos", tempo/60, tempo%60));
 	//DecimalFormat df = new DecimalFormat("0.##");
 	//String dx = df.format(tempo);
 		//tempoPane.setText(dx);

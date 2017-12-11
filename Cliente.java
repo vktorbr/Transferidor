@@ -74,9 +74,9 @@ public class Cliente implements Runnable{
         int bytesRead;
         double current=0;
         double porcentagem=0;
-        long velocidade=0;
+        double velocidade=0;
         int cont=100;
-        long tempoRestante=0;
+        double tempoRestante=0;
         // Criando canal de transferencia
         is = sockServer.getInputStream();
 
@@ -87,22 +87,22 @@ public class Cliente implements Runnable{
             
             if(!cancelado){
             	
-            long tempoInicio = System.nanoTime();	
+            double tempoInicio = System.nanoTime();	
             fos.write(cbuffer, 0, bytesRead);
             fos.flush();
-            long tempoFinal =(System.nanoTime()-tempoInicio);
+            double tempoFinal = (System.nanoTime()-tempoInicio);
             if(tempoFinal!=0){
-            	velocidade = bytesRead/tempoFinal;
+            	velocidade = (bytesRead/tempoFinal);
             }
             current+=bytesRead;
             
-            long tamanhoRestante = (long) (tamanho-current);
+            double tamanhoRestante = (tamanho-current);
             if(velocidade!=0){
             	tempoRestante = (tamanhoRestante/velocidade);
             }
            // if(cont==0) {
             //	cont=100;
-            usuario.setarTempo(tempoRestante/1000000, usuario.tempoCliente);
+            usuario.setarTempo(tempoRestante/1000000000, usuario.tempoCliente);
             //}cont--;
             porcentagem=(current/tamanho)*100;
             usuario.setarPorcento(porcentagem, usuario.PorcentagemCliente);

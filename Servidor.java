@@ -16,7 +16,6 @@ public class Servidor implements Runnable  {
 		Thread rttServerT = new Thread(rttServer);
 		rttServerT.start();
 		
-		
         this.usuario=usuario;           
     }
     public void mandarMsg(Socket sock, String extensao) throws IOException {
@@ -43,8 +42,8 @@ public class Servidor implements Runnable  {
         int bytesRead;
         double current = 0;
         double porcentagem=0;
-        long velocidade=0;
-        long tempoRestante=0;
+        double velocidade=0;
+        double tempoRestante=0;
         // Criando canal de transferencia
         socketOut = sock.getOutputStream();
         
@@ -52,11 +51,11 @@ public class Servidor implements Runnable  {
         System.out.println("Enviando Arquivo...");
         
         while ((bytesRead = fileIn.read(cbuffer)) != -1) {
-            long tempoInicio = System.nanoTime();
+            double tempoInicio = System.nanoTime();
             socketOut.write(cbuffer, 0, bytesRead);
             socketOut.flush();
 
-            long tempoFinal = ((System.nanoTime()-tempoInicio));
+            double tempoFinal = ((System.nanoTime()-tempoInicio));
             
             if(tempoFinal!=0){
             	velocidade = bytesRead / tempoFinal;
@@ -64,13 +63,13 @@ public class Servidor implements Runnable  {
             
             current+=bytesRead;
             
-            long tamanhoRestante = (long) (tamanho-current);
+            double tamanhoRestante = (tamanho-current);
             if(velocidade!=0){
-            	tempoRestante = tamanhoRestante/velocidade;
+            	tempoRestante = tamanhoRestante*velocidade;
             }
             porcentagem = (current/tamanho)*100;
             
-            usuario.setarTempo(tempoRestante/1000000, usuario.tempoServidor);
+            usuario.setarTempo(tempoRestante/1000000000, usuario.tempoServidor);
             usuario.setarPorcento(porcentagem, usuario.Porcentagem);
         }fileIn.close();
         socketOut.close();
