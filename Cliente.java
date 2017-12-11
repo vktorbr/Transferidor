@@ -63,6 +63,10 @@ public class Cliente implements Runnable{
             return tamanho;
         }
     }
+    public void mandarMsg(Socket sock, String extensao) throws IOException {
+        DataOutputStream saida = new DataOutputStream(sock.getOutputStream());
+        saida.writeUTF(extensao);
+    }
 
     public void receberArquivo(Socket sockServer, FileOutputStream fos, InputStream is, File file, double tamanho) throws IOException, InterruptedException {
         // Prepara variaveis para transferencia
@@ -83,10 +87,10 @@ public class Cliente implements Runnable{
             
             if(!cancelado){
             	
-            long tempoInicio = System.currentTimeMillis();	
+            long tempoInicio = System.nanoTime();	
             fos.write(cbuffer, 0, bytesRead);
             fos.flush();
-            long tempoFinal =(System.currentTimeMillis()-tempoInicio);
+            long tempoFinal =(System.nanoTime()-tempoInicio);
             if(tempoFinal!=0){
             	velocidade = (bytesRead/1024)/tempoFinal;
             }
@@ -98,7 +102,7 @@ public class Cliente implements Runnable{
             }
            // if(cont==0) {
             //	cont=100;
-            usuario.setarTempo(tempoRestante/1000, usuario.tempoCliente);
+            usuario.setarTempo(tempoRestante/1000000, usuario.tempoCliente);
             //}cont--;
             porcentagem=(current/tamanho)*100;
             usuario.setarPorcento(porcentagem, usuario.PorcentagemCliente);
